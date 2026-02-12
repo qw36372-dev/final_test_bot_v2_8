@@ -119,3 +119,40 @@ class CurrentTestState(BaseModel):
             self.selected_answers = self.answers_history[question_index].copy()
         else:
             self.selected_answers = set()
+    
+    def calculate_results(self) -> None:
+        """
+        Вычисляет результаты теста.
+        
+        Проходит по всем вопросам, сравнивает ответы пользователя
+        с правильными и вычисляет процент правильных ответов.
+        """
+        self.total_questions = len(self.questions)
+        self.correct_count = 0
+        
+        for idx, question in enumerate(self.questions):
+            user_answer = self.answers_history.get(idx, set())
+            if user_answer == question.correct_answers:
+                self.correct_count += 1
+        
+        # Вычисляем процент
+        if self.total_questions > 0:
+            self.percentage = (self.correct_count / self.total_questions) * 100
+        else:
+            self.percentage = 0.0
+        
+        # Определяем оценку
+        if self.percentage >= 90:
+            self.grade = "отлично"
+        elif self.percentage >= 75:
+            self.grade = "хорошо"
+        elif self.percentage >= 60:
+            self.grade = "удовлетворительно"
+        else:
+            self.grade = "неудовлетворительно"
+        
+        # Вычисляем затраченное время
+        elapsed = time.time() - self.start_time
+        minutes = int(elapsed // 60)
+        seconds = int(elapsed % 60)
+        self.elapsed_time = f"{minutes:02d}:{seconds:02d}"

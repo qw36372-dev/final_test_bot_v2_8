@@ -166,7 +166,7 @@ async def handle_next_question(
             return
         
         # Сохраняем текущий ответ в историю
-        test_state.save_current_answer()
+        test_state.save_answer(test_state.current_index)
         
         # Очищаем выбор для следующего вопроса
         test_state.selected_answers.clear()
